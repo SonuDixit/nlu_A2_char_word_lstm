@@ -1,2 +1,3 @@
 # nlu_second_assignment
-this is second assignment
+run char_lstm_model.py
+
