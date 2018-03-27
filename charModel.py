@@ -56,38 +56,7 @@ class CharLSTM:
 
    
 
-    def generate(self, character_set, start, num_predictions):
-        args = self.args
-        init = tf.global_variables_initializer()
-        char_to_value = dict((c, i) for i, c in enumerate(character_set))
-        value_to_char = dict((i, c) for i, c in enumerate(character_set))
-        sentence = start
-        with tf.Session() as sess:
-            sess.run(init)
-            init = tf.initialize_all_variables()
-            sess.run(init)
-            tf_saver = tf.train.Saver(tf.global_variables())
-            checkpoint = tf.train.get_checkpoint_state(args.save_dir)
-            if checkpoint and checkpoint.model_checkpoint_path:
-                tf_saver.restore(sess, checkpoint.model_checkpoint_path)
-            state = sess.run(self.cell.zero_state(1, tf.float32))
-            for c in start[:-1]:
-                x = np.reshape(char_to_value[c], [1, 1])
-                feed = {self.input_data: x, self.initial_state: state}
-                state = sess.run(self.final_state, feed)
 
-            c = start[-1]
-            for i in range(num_predictions):
-                x = np.reshape(char_to_value[c], [1, 1])
-                feed = {self.input_data: x, self.initial_state: state}
-                prob, state = sess.run([self.probs, self.final_state], feed)
-                if c == ' ':
-                    val = int(np.searchsorted(np.cumsum(prob[0]), np.random.rand(1)))
-                else:
-                    val = int(np.argmax(prob[0]))
-                c = value_to_char[val]
-                sentence += c
-            return sentence
         
         
     def calPerplex(self, test_data):
