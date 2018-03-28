@@ -1,0 +1,2 @@
+tensorflow      pip install tensorflow
+nltk            python -m nltk.downloader all
